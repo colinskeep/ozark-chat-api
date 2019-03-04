@@ -5,23 +5,16 @@ const io = require('socket.io')(http);
 const MongoClient = require('mongodb').MongoClient;
 const url = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}`;
 
+let arr = [];
 const pipeline = [
   {
     $project: { documentKey: false }
   }
 ];
 
-//todo: dont save connected users to database, save users to array on node
 MongoClient.connect(url, function(err, db) {
   if (!err) {
     dbase = db.db(process.env.DB_NAME);
-    dbase.createCollection('active', {
-      validator: { $or: [
-        {socketid: {$type: 'string'}},
-        {id: {$type: 'string'}},
-        {datetime: {$type: 'string'}},
-      ]},
-    });
     dbase.createCollection('message', {
       validator: { $or: [
         {to: {$type: 'string'}},
@@ -32,14 +25,13 @@ MongoClient.connect(url, function(err, db) {
       ]},
     });
     messageCollection = dbase.collection('message');
-    activeCollection = dbase.collection('active');
     changeStream = messageCollection.watch(pipeline);
     changeStream.on('change', async function(change) {
       try {
-        const toUser = await activeCollection.findOne({id: change.fullDocument.to});
-        if (toUser) {
-          io.to(`${toUser.socketid}`).emit(`${change.fullDocument.message}`);
-          console.log('sending message:', change.fullDocument.message, 'to user: ', toUser.socketid);
+        let index = arr.map(function(e) {return e.socketid}).indexOf(change.fullDocument.to);
+        if (index > -1) {
+          io.to(`${arr[index].socketid}`).emit(`${change.fullDocument.message}`);
+          console.log('sending message:', change.fullDocument.message, 'to user: ', arr[index].socketid);
         }
       } catch (err) {console.log(err)}
     });
@@ -53,7 +45,7 @@ app.get('/', function(req, res){
 });
 
 io.on('connection', (socket) => {
-  activeCollection.insertOne({
+  arr.push({
     socketid: socket.conn.id,
     jwt: socket.handshake.query.user,
     datetime: Math.floor(new Date() / 1000),
@@ -70,10 +62,10 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
-    activeCollection.findOneAndDelete({socketid: socket.conn.id});
+    arr.splice(arr.map(function(e) {
+      return e.socketid}).indexOf(socket.conn.id), 1);
   });
 });
-
 
 http.listen(9000, function() {
   console.log('listening on *:9000');
