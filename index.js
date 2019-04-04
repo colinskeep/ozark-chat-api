@@ -16,6 +16,7 @@ const pipeline = [
 MongoClient.connect(url, function(err, db) {
   if (!err) {
     dbase = db.db(process.env.DB_NAME);
+    dbase2 = db.db('users');
     dbase.createCollection('message', {
       validator: { $or: [
         {to: {$type: 'string'}},
@@ -25,6 +26,7 @@ MongoClient.connect(url, function(err, db) {
         {datetime: {type: 'string'}}
       ]},
     });
+    registrationCollection = dbase2.collection('registrations');
     messageCollection = dbase.collection('message');
     changeStream = messageCollection.watch(pipeline);
     changeStream.on('change', async function(change) {
@@ -44,7 +46,7 @@ MongoClient.connect(url, function(err, db) {
 io.on('connection', async (socket) => {
   console.log('jwt: ', socket.handshake.query.jwt);
   const user = await jwt.resolve(socket.handshake.query.jwt);
-  const name = await db.db('users').collection('registrations').findOne({email: user.email});
+  const name = await registrationCollection.findOne({email: user.email});
   arr.push({
     socketid: socket.conn.id,
     username: name.username,
