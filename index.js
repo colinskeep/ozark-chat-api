@@ -28,7 +28,7 @@ MongoClient.connect(url, function(err, db) {
     changeStream = messageCollection.watch(pipeline);
     changeStream.on('change', async function(change) {
       try {
-        let index = arr.map(function(e) {return e.socketid}).indexOf(change.fullDocument.to);
+        let index = arr.map(function(e) {return e.username}).indexOf(change.fullDocument.to);
         if (index > -1) {
           io.to(`${arr[index].socketid}`).emit(`${change.fullDocument.message}`);
           console.log('sending message:', change.fullDocument.message, 'to user: ', arr[index].socketid);
@@ -44,8 +44,9 @@ app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
-io.on('connection', (socket) => {
+io.on('connection', async (socket) => {
   const user = await jwt.resolve(socket.handshake.query.jwt);
+  console.log(user);
   arr.push({
     socketid: socket.conn.id,
     username: user.username,
