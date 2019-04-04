@@ -23,7 +23,8 @@
 
       $(function () {
         socket = io.connect(window.location.origin, {query: 'user=12345'});
-      });4
+        console.log(window.location.origin);
+      });
       function myFunction() {
         socket.emit('message', {
           to: '12345',

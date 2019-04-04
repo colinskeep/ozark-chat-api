@@ -45,6 +45,7 @@ app.get('/', function(req, res){
 });
 
 io.on('connection', (socket) => {
+  console.log(socket);
   arr.push({
     socketid: socket.conn.id,
     jwt: socket.handshake.query.user,
