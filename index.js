@@ -56,8 +56,8 @@ io.on('connection', async (socket) => {
 
   socket.on('message', function(value) {
     messageCollection.insertOne({
-      to: value.to,
-      from: user.username,
+      to: value.username,
+      from: name.username,
       message: value.message,
       type: value.type,
       datetime: Math.floor(new Date() / 1000),
