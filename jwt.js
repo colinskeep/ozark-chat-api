@@ -1,3 +1,4 @@
+'use strict';
 const jwt = require('jsonwebtoken');
 
 const signOptions = {
@@ -10,7 +11,7 @@ const signOptions = {
 async function resolve(token) {
   try {
     console.log(token);
-    const data = await jwt.verify(token, JSON.parse(process.env.PUBLIC_KEY), {algorithm: 'RS256'});
+    const data = await jwt.verify(token, JSON.parse(process.env.PUBLIC_KEY), signOptions);
     //await lastSeen.update(data.email);
     console.log(data);
     return data;
