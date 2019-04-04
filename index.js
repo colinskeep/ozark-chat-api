@@ -45,10 +45,10 @@ app.get('/', function(req, res){
 });
 
 io.on('connection', (socket) => {
-  console.log(socket);
+  const user = await jwt.resolve(socket.handshake.query.jwt);
   arr.push({
     socketid: socket.conn.id,
-    jwt: socket.handshake.query.user,
+    username: user.username,
     datetime: Math.floor(new Date() / 1000),
   });
   console.log(arr);
@@ -56,7 +56,7 @@ io.on('connection', (socket) => {
   socket.on('message', function(value) {
     messageCollection.insertOne({
       to: value.to,
-      from: value.from,
+      from: user.username,
       message: value.message,
       type: value.type,
       datetime: Math.floor(new Date() / 1000),
