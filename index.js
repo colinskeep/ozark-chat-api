@@ -41,7 +41,7 @@ MongoClient.connect(url, function(err, db) {
   }
 });
 
-io.on('connection', async (socket) => {
+io.on('connection', (socket) => {
   console.log('jwt: ', socket.handshake.query.jwt);
   const user = await jwt.resolve(socket.handshake.query.jwt);
   console.log(user);
