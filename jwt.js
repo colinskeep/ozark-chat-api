@@ -17,6 +17,7 @@ async function resolve(token) {
   } catch (err) {
     // eslint-disable-next-line no-console
     // console.log(`logger log. ${err}`);
+    console.log(err);
   }
 }
 module.exports  = {
