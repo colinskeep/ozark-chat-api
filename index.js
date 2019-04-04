@@ -4,6 +4,7 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const MongoClient = require('mongodb').MongoClient;
 const url = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}`;
+const jwt = require('./jwt.js');
 
 let arr = [];
 const pipeline = [
@@ -38,10 +39,6 @@ MongoClient.connect(url, function(err, db) {
   } else if (err) {
     console.log(err);
   }
-});
-
-app.get('/', function(req, res){
-  res.sendFile(__dirname + '/index.html');
 });
 
 io.on('connection', async (socket) => {
