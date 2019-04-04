@@ -50,6 +50,7 @@ io.on('connection', (socket) => {
     jwt: socket.handshake.query.user,
     datetime: Math.floor(new Date() / 1000),
   });
+  console.log(arr);
 
   socket.on('message', function(value) {
     messageCollection.insertOne({
@@ -59,14 +60,16 @@ io.on('connection', (socket) => {
       type: value.type,
       datetime: Math.floor(new Date() / 1000),
     })
+    console.log(value);
   });
 
   socket.on('disconnect', () => {
     arr.splice(arr.map(function(e) {
       return e.socketid}).indexOf(socket.conn.id), 1);
+    console.log(arr);
   });
 });
 
 http.listen(process.env.PORT, function() {
-  console.log('listening on *:9000');
+  console.log('listening');
 });
