@@ -37,14 +37,23 @@ MongoClient.connect(url, function(err, db) {
           }
         })
         console.log('send to:', activeUserConnections);
-        let index = arr.map(function(e) {return e.username}).indexOf(change.fullDocument.to);
-        if (index > -1) {
-          io.to(`${arr[index].socketid}`).emit('chat', {
+        let index = activeUserConnections.map(function(e) {return e.socketid})
+        for (var i = 0; i < index.length; i++) {
+          io.to(`${index[i].socketid}`).emit('chat', {
             to: '12345',
             from: 'fdsa',
             message: `${change.fullDocument.message}`,
             type: 'chat',
           });
+        }
+        // let index = activeUserConnections.map(function(e) {return e.username}).indexOf(change.fullDocument.to);
+        // if (index > -1) {
+        //   io.to(`${arr[index].socketid}`).emit('chat', {
+        //     to: '12345',
+        //     from: 'fdsa',
+        //     message: `${change.fullDocument.message}`,
+        //     type: 'chat',
+        //   });
           console.log('sending message:', change.fullDocument.message, 'to user: ', arr[index].socketid);
         }
       } catch (err) {console.log(err)}
