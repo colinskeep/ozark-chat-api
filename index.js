@@ -33,7 +33,12 @@ MongoClient.connect(url, function(err, db) {
       try {
         let index = arr.map(function(e) {return e.username}).indexOf(change.fullDocument.to);
         if (index > -1) {
-          io.to(`${arr[index].socketid}`).emit(`${change.fullDocument.message}`, {type: 'chat'});
+          io.to(`${arr[index].socketid}`).emit('chat', {
+            to: '12345',
+            from: 'fdsa',
+            message: `${change.fullDocument.message}`,
+            type: 'chat',
+          });
           console.log('sending message:', change.fullDocument.message, 'to user: ', arr[index].socketid);
         }
       } catch (err) {console.log(err)}
