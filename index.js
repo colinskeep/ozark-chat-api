@@ -32,11 +32,11 @@ MongoClient.connect(url, function(err, db) {
     changeStream.on('change', async function(change) {
       try {
         let activeUserConnections = arr.filter(function(item) {
-          if (item.username = change.fullDocument.to) {
+          if (item.username == change.fullDocument.to) {
             return true;
           }
         })
-        console.log(activeUserConnections);
+        console.log('send to:', activeUserConnections);
         let index = arr.map(function(e) {return e.username}).indexOf(change.fullDocument.to);
         if (index > -1) {
           io.to(`${arr[index].socketid}`).emit('chat', {
