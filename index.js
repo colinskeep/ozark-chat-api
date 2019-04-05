@@ -45,6 +45,7 @@ MongoClient.connect(url, function(err, db) {
             message: `${change.fullDocument.message}`,
             type: 'chat',
           });
+          console.log('sending message:', change.fullDocument.message, 'to user: ', index[i].socketid);
         }
         // let index = activeUserConnections.map(function(e) {return e.username}).indexOf(change.fullDocument.to);
         // if (index > -1) {
@@ -54,8 +55,6 @@ MongoClient.connect(url, function(err, db) {
         //     message: `${change.fullDocument.message}`,
         //     type: 'chat',
         //   });
-          console.log('sending message:', change.fullDocument.message, 'to user: ', arr[index].socketid);
-        }
       } catch (err) {console.log(err)}
     });
   } else if (err) {
