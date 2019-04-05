@@ -74,6 +74,7 @@ io.on('connection', async (socket) => {
   console.log(arr);
 
   socket.on('chat', function(value) {
+    console.log(socket.conn.id);
     messageCollection.insertOne({
       to: value.username,
       from: name.username,
