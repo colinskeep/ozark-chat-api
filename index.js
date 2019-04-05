@@ -39,13 +39,13 @@ MongoClient.connect(url, function(err, db) {
         console.log('send to:', activeUserConnections);
         let index = activeUserConnections.map(function(e) {return e.socketid})
         for (var i = 0; i < index.length; i++) {
-          io.to(`${index[i].socketid}`).emit('chat', {
+          io.to(`${index[i]`).emit('chat', {
             to: '12345',
             from: 'fdsa',
             message: `${change.fullDocument.message}`,
             type: 'chat',
           });
-          console.log('sending message:', change.fullDocument.message, 'to user: ', index[i].socketid);
+          console.log('sending message:', change.fullDocument.message, 'to user: ', index[i]);
         }
         // let index = activeUserConnections.map(function(e) {return e.username}).indexOf(change.fullDocument.to);
         // if (index > -1) {
