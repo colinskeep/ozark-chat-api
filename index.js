@@ -40,10 +40,11 @@ MongoClient.connect(url, function(err, db) {
         let index = activeUserConnections.map(function(e) {return e.socketid})
         for (var i = 0; i < index.length; i++) {
           io.to(`${index[i]}`).emit('chat', {
-            to: '12345',
-            from: 'fdsa',
+            to: `${change.fullDocument.to}`,
+            from: `${change.fullDocument.from}`,
             message: `${change.fullDocument.message}`,
             type: 'chat',
+            time: `${change.fullDocument.datetime}`,
           });
           console.log('sending message:', change.fullDocument.message, 'to user: ', index[i]);
         }
