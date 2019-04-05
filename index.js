@@ -33,7 +33,7 @@ MongoClient.connect(url, function(err, db) {
       try {
         let index = arr.map(function(e) {return e.username}).indexOf(change.fullDocument.to);
         if (index > -1) {
-          io.to(`${arr[index].socketid}`).emit(`${change.fullDocument.message}`);
+          io.to(`${arr[index].socketid}`).emit(`${change.fullDocument.message}`, {type: 'chat'});
           console.log('sending message:', change.fullDocument.message, 'to user: ', arr[index].socketid);
         }
       } catch (err) {console.log(err)}
@@ -54,7 +54,7 @@ io.on('connection', async (socket) => {
   });
   console.log(arr);
 
-  socket.on('message', function(value) {
+  socket.on('chat', function(value) {
     messageCollection.insertOne({
       to: value.username,
       from: name.username,
