@@ -49,14 +49,6 @@ MongoClient.connect(url, function(err, db) {
           });
           console.log('sending message:', change.fullDocument.message, 'to user: ', index[i]);
         }
-        // let index = activeUserConnections.map(function(e) {return e.username}).indexOf(change.fullDocument.to);
-        // if (index > -1) {
-        //   io.to(`${arr[index].socketid}`).emit('chat', {
-        //     to: '12345',
-        //     from: 'fdsa',
-        //     message: `${change.fullDocument.message}`,
-        //     type: 'chat',
-        //   });
       } catch (err) {console.log(err)}
     });
   } else if (err) {
@@ -75,13 +67,12 @@ io.on('connection', async (socket) => {
   });
   console.log(arr);
 
-  socket.on('chat', function(value) {
+  socket.on('message', function(value) {
     console.log(socket.conn.id);
     messageCollection.insertOne({
       to: value.username,
       from: name.username,
       message: value.message,
-      type: value.type,
       datetime: Math.floor(new Date() / 1000),
     })
     console.log(value);
