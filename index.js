@@ -39,12 +39,12 @@ MongoClient.connect(url, function(err, db) {
         console.log('send to:', activeUserConnections);
         let index = activeUserConnections.map(function(e) {return e.socketid})
         for (var i = 0; i < index.length; i++) {
-          io.to(`${index[i]}`).emit('chat', {
+          io.to(`${index[i]}`).emit('message', {
             id: `${change.fullDocument._id}`,
             to: `${change.fullDocument.to}`,
             from: `${change.fullDocument.from}`,
             message: `${change.fullDocument.message}`,
-            type: 'chat',
+            type: 'message',
             time: `${change.fullDocument.datetime}`,
           });
           console.log('sending message:', change.fullDocument.message, 'to user: ', index[i]);
