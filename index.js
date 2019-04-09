@@ -35,11 +35,8 @@ MongoClient.connect(url, function(err, db) {
       try {
         console.log(change.fullDocument);
         let activeUserConnections = arr.filter(function(item) {
-          console.log(item.userId);
           const userId = item.userId.toString().trim();
-          console.log(change.fullDocument.toUserId);
           const toUserId = change.fullDocument.toUserId.toString().trim();
-          console.log(userId == toUserId);
           if (userId == toUserId) {
             return true;
           }
@@ -47,7 +44,7 @@ MongoClient.connect(url, function(err, db) {
         console.log('send to:', activeUserConnections);
         let index = activeUserConnections.map(function(e) {return e.socketid})
         for (var i = 0; i < index.length; i++) {
-          io.to(`${index[i]}`).emit('message', {
+          io.to(`${index[i]}`).emit('message', [{
             messageId: `${change.fullDocument._id}`,
             toUser: `${change.fullDocument.toUser}`,
             toUserId: `${change.fullDocument.toUserId}`,
@@ -56,7 +53,7 @@ MongoClient.connect(url, function(err, db) {
             message: `${change.fullDocument.message}`,
             type: 'message',
             time: `${change.fullDocument.datetime}`,
-          });
+          }]);
           console.log('sending message:', change.fullDocument.message, 'to user: ', index[i]);
         }
       } catch (err) {console.log(err)}
@@ -70,6 +67,9 @@ io.on('connection', async (socket) => {
   console.log('jwt: ', socket.handshake.query.jwt);
   const user = await jwt.resolve(socket.handshake.query.jwt);
   const name = await registrationCollection.findOne({email: user.email});
+  console.log(socket.handshake.query.lastMessage);
+  const messages = await messageCollection.find({id: name._id, datetime: {$gt: socket.handshake.query.lastMessage}});
+  console.log(messages);
   arr.push({
     socketid: socket.conn.id,
     userId: name._id,
