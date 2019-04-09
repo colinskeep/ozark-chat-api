@@ -72,7 +72,7 @@ io.on('connection', async (socket) => {
   });
   console.log(arr);
 
-  socket.on('message', function(value) {
+  socket.on('message', async function(value) {
     console.log(socket.conn.id);
     const toUserId = await registrationCollection.findOne({username: value.username});
     messageCollection.insertOne({
