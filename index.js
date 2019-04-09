@@ -80,12 +80,14 @@ io.on('connection', async (socket) => {
 
   socket.on('message', async function(value) {
     console.log(socket.conn.id);
-    const toUserId = await registrationCollection.findOne({username: value.username});
+    const toId = await registrationCollection.findOne({username: value.username});
+    const toUserId = toId._id.toString();
+    const fromUserId = name._id.toString();
     messageCollection.insertOne({
       toUser: value.username,
-      toUserId: toUserId.id,
+      toUserId: toUserId,
       fromUser: name.username,
-      fromUserId: name.id,
+      fromUserId: fromUserId,
       message: value.message,
       datetime: Math.floor(new Date() / 1000),
     })
