@@ -35,8 +35,7 @@ MongoClient.connect(url, function(err, db) {
       try {
         console.log(change.fullDocument);
         let activeUserConnections = arr.filter(function(item) {
-          const userId = item.userId.toString().trim();
-          if (userId == change.fullDocument.toUserId.toString().trim()) {
+          if (item.userId.toString().trim() == change.fullDocument.toUserId.toString().trim()) {
             return true;
           }
         })
@@ -66,12 +65,12 @@ io.on('connection', async (socket) => {
   console.log('jwt: ', socket.handshake.query.jwt);
   const user = await jwt.resolve(socket.handshake.query.jwt);
   const name = await registrationCollection.findOne({email: user.email});
-  console.log(socket.handshake.query.lastMessage);
-  const messages = await messageCollection.find({toUserId: name._id, datetime: {$gt: socket.handshake.query.lastMessage}});
+  const userId = name._id.toString().trim();
+  const messages = await messageCollection.find({toUserId: userId, datetime: {$gt: socket.handshake.query.lastMessage}});
   console.log(messages);
   arr.push({
     socketid: socket.conn.id,
-    userId: name._id,
+    userId: userId,
     username: name.username,
     datetime: Math.floor(new Date() / 1000),
   });
