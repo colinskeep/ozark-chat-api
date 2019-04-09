@@ -68,7 +68,7 @@ io.on('connection', async (socket) => {
   const user = await jwt.resolve(socket.handshake.query.jwt);
   const name = await registrationCollection.findOne({email: user.email});
   console.log(socket.handshake.query.lastMessage);
-  const messages = await messageCollection.find({id: name._id, datetime: {$gt: socket.handshake.query.lastMessage}});
+  const messages = await messageCollection.find({toUserId: name._id, datetime: {$gt: socket.handshake.query.lastMessage}});
   console.log(messages);
   arr.push({
     socketid: socket.conn.id,
