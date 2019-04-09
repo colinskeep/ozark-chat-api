@@ -33,6 +33,7 @@ MongoClient.connect(url, function(err, db) {
     changeStream = messageCollection.watch(pipeline);
     changeStream.on('change', async function(change) {
       try {
+        console.log(change.fullDocument);
         let activeUserConnections = arr.filter(function(item) {
           if (item.userId == change.fullDocument.toUserId) {
             return true;
