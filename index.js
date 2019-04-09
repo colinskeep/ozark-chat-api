@@ -19,8 +19,10 @@ MongoClient.connect(url, function(err, db) {
     dbase2 = db.db('users');
     dbase.createCollection('message', {
       validator: { $or: [
-        {to: {$type: 'string'}},
-        {from: {$type: 'string'}},
+        {toUser: {$type: 'string'}},
+        {toUserId: {$type: 'string'}},
+        {fromUser: {$type: 'string'}},
+        {fromUserId: {$type: 'string'}},
         {message: {$type: 'string'}},
         {type: {$type: 'string'}},
         {datetime: {type: 'string'}}
@@ -32,7 +34,7 @@ MongoClient.connect(url, function(err, db) {
     changeStream.on('change', async function(change) {
       try {
         let activeUserConnections = arr.filter(function(item) {
-          if (item.username == change.fullDocument.to) {
+          if (item.userId == change.fullDocument.toUserId) {
             return true;
           }
         })
@@ -40,9 +42,11 @@ MongoClient.connect(url, function(err, db) {
         let index = activeUserConnections.map(function(e) {return e.socketid})
         for (var i = 0; i < index.length; i++) {
           io.to(`${index[i]}`).emit('message', {
-            id: `${change.fullDocument._id}`,
-            to: `${change.fullDocument.to}`,
-            from: `${change.fullDocument.from}`,
+            messageId: `${change.fullDocument._id}`,
+            toUser: `${change.fullDocument.toUser}`,
+            toUserId: `${change.fullDocument.toUserId}`,
+            fromUser: `${change.fullDocument.fromUser}`,
+            fromUserId: `${change.fullDocument.fromUserId}`,
             message: `${change.fullDocument.message}`,
             type: 'message',
             time: `${change.fullDocument.datetime}`,
@@ -62,6 +66,7 @@ io.on('connection', async (socket) => {
   const name = await registrationCollection.findOne({email: user.email});
   arr.push({
     socketid: socket.conn.id,
+    userId: name._id,
     username: name.username,
     datetime: Math.floor(new Date() / 1000),
   });
@@ -69,9 +74,12 @@ io.on('connection', async (socket) => {
 
   socket.on('message', function(value) {
     console.log(socket.conn.id);
+    const toUserId = await registrationCollection.findOne({username: value.username});
     messageCollection.insertOne({
-      to: value.username,
-      from: name.username,
+      toUser: value.username,
+      toUserId: toUserId._id,
+      fromUser: name.username,
+      fromUserId: name._id,
       message: value.message,
       datetime: Math.floor(new Date() / 1000),
     })
