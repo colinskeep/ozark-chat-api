@@ -72,7 +72,7 @@ io.on('connection', async (socket) => {
   console.log(messages);
   arr.push({
     socketid: socket.conn.id,
-    userId: name.id,
+    userId: name._id,
     username: name.username,
     datetime: Math.floor(new Date() / 1000),
   });
