@@ -72,7 +72,7 @@ io.on('connection', async (socket) => {
   console.log(messages);
   arr.push({
     socketid: socket.conn.id,
-    userId: name._id,
+    userId: name.id,
     username: name.username,
     datetime: Math.floor(new Date() / 1000),
   });
@@ -83,9 +83,9 @@ io.on('connection', async (socket) => {
     const toUserId = await registrationCollection.findOne({username: value.username});
     messageCollection.insertOne({
       toUser: value.username,
-      toUserId: toUserId._id,
+      toUserId: toUserId.id,
       fromUser: name.username,
-      fromUserId: name._id,
+      fromUserId: name.id,
       message: value.message,
       datetime: Math.floor(new Date() / 1000),
     })
