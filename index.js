@@ -68,7 +68,7 @@ io.on('connection', async (socket) => {
   const userId = name._id.toString().trim();
   console.log(typeof socket.handshake.query.lastMessage);
   const messages = await messageCollection.find({toUserId: userId, datetime: {$gt: parseInt(socket.handshake.query.lastMessage)}}).toArray();
-  socket.emit(messages);
+  io.to(`${socket.conn.id}`).emit('message', messages);
   console.log(messages);
   arr.push({
     socketid: socket.conn.id,
