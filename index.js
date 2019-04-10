@@ -64,7 +64,6 @@ MongoClient.connect(url, function(err, db) {
 });
 
 io.on('connection', async (socket) => {
-  console.log('jwt: ', socket.handshake.query.jwt);
   const user = await jwt.resolve(socket.handshake.query.jwt);
   const name = await registrationCollection.findOne({email: user.email});
   const userId = name._id.toString().trim();
@@ -72,11 +71,12 @@ io.on('connection', async (socket) => {
   const messages = await messageCollection.find({$or: [{toUserId: userId, fromUserId: userId}]/*, datetime: {$gt: parseInt(socket.handshake.query.lastMessage)}*/}).toArray();
   let uniqueConvo = [];
   for (let i = 0, convo = []; i < messages.length; i++) {
-    console.log(i)
     convo.push(messages[i].toUserId);
     convo.push(messages[i].fromUserId);
     if (i == messages.length - 1) {
+      console.log(convo);
       filtered = [...new Set(convo)];
+      console.log(filtered);
       uniqueConvo = filtered.splice(filtered.indexOf(userId), 1);
       console.log(uniqueConvo);
     }
@@ -93,7 +93,6 @@ io.on('connection', async (socket) => {
   });
 
   socket.on('message', async function(value) {
-    console.log(socket.conn.id);
     const toId = await registrationCollection.findOne({username: value.username});
     const toUserId = toId._id.toString();
     const fromUserId = name._id.toString();
@@ -111,7 +110,6 @@ io.on('connection', async (socket) => {
   socket.on('disconnect', () => {
     arr.splice(arr.map(function(e) {
       return e.socketid}).indexOf(socket.conn.id), 1);
-    console.log(arr);
   });
 });
 
