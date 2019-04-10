@@ -43,7 +43,7 @@ MongoClient.connect(url, function(err, db) {
         let index = activeUserConnections.map(function(e) {return e.socketid})
         for (var i = 0; i < index.length; i++) {
           io.to(`${index[i]}`).emit('message', [{
-            messageId: `${change.fullDocument._id}`,
+            _id: `${change.fullDocument._id}`,
             toUser: `${change.fullDocument.toUser}`,
             toUserId: `${change.fullDocument.toUserId}`,
             fromUser: `${change.fullDocument.fromUser}`,
