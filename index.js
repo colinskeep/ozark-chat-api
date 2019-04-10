@@ -74,6 +74,7 @@ io.on('connection', async (socket) => {
     convo.push(messages[i].fromUserId);
     if (i == messages.length - 1) {
       filtered = [...new Set(convo)];
+      filtered = filtered.filter(v => v !== userId);
       console.log(filtered);
       //uniqueConvo = filtered.splice(filtered.indexOf(userId), 1);
       //console.log(uniqueConvo);
