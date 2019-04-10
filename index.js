@@ -76,9 +76,10 @@ io.on('connection', async (socket) => {
     convo.push(messages[i].fromUserId);
     if (i == messages.length - 1) {
       uniqueConvo = [...new Set(convo)].pop(userId);
+      console.log(uniqueConvo);
     }
   }
-  console.log(uniqueConvo);
+
   if (messages.length > 0) {
     io.to(`${socket.conn.id}`).emit('message', messages);
   }
