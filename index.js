@@ -33,9 +33,7 @@ MongoClient.connect(url, function(err, db) {
     changeStream = messageCollection.watch(pipeline);
     changeStream.on('change', async function(change) {
       try {
-        console.log(change.fullDocument);
         let activeUserConnections = arr.filter(function(item) {
-          console.log(item.userId.toString().trim(), change.fullDocument.toUserId.toString().trim())
           if (item.userId.toString().trim() == change.fullDocument.toUserId.toString().trim()) {
             return true;
           }
@@ -84,14 +82,12 @@ io.on('connection', async (socket) => {
   if (messages.length > 0) {
     io.to(`${socket.conn.id}`).emit('message', messages);
   }
-  console.log(messages);
   arr.push({
     socketid: socket.conn.id,
     userId: userId,
     username: name.username,
     datetime: Math.floor(new Date() / 1000),
   });
-  console.log(arr);
 
   socket.on('message', async function(value) {
     console.log(socket.conn.id);
