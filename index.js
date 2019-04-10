@@ -72,12 +72,10 @@ io.on('connection', async (socket) => {
   console.log(messages);
   let uniqueConvo = [];
   for (let i = 0, convo = []; i < messages.length; i++) {
-    convo.push({to: messages[i].toUserId});
-    convo.push({from: messages[i].fromUserId});
+    convo.push(messages[i].toUserId);
+    convo.push(messages[i].fromUserId);
     if (i == messages.length - 1) {
-      console.log(convo);
       filtered = [...new Set(convo)];
-      console.log(filtered);
       uniqueConvo = filtered.splice(filtered.indexOf(userId), 1);
       console.log(uniqueConvo);
     }
