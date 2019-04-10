@@ -72,6 +72,7 @@ io.on('connection', async (socket) => {
   const messages = await messageCollection.find({$or: [{toUserId: userId, fromUserId: userId}], datetime: {$gt: parseInt(socket.handshake.query.lastMessage)}}).toArray();
   let uniqueConvo = [];
   for (let i = 0, convo = []; i < messages.length; i++) {
+    console.log(i)
     convo.push(messages[i].toUserId);
     convo.push(messages[i].fromUserId);
     if (i == messages.length - 1) {
