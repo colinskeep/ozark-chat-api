@@ -35,6 +35,7 @@ MongoClient.connect(url, function(err, db) {
       try {
         console.log(change.fullDocument);
         let activeUserConnections = arr.filter(function(item) {
+          console.log(item.userId.toString().trim(), change.fullDocument.toUserId.toString().trim())
           if (item.userId.toString().trim() == change.fullDocument.toUserId.toString().trim()) {
             return true;
           }
