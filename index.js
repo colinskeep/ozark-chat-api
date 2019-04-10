@@ -67,17 +67,16 @@ io.on('connection', async (socket) => {
   const user = await jwt.resolve(socket.handshake.query.jwt);
   const name = await registrationCollection.findOne({email: user.email});
   const userId = name._id.toString().trim();
-  console.log(socket.handshake.query.lastMessage);
   const messages = await messageCollection.find({$or: [{toUserId: userId}, {fromUserId: userId}]/*, datetime: {$gt: parseInt(socket.handshake.query.lastMessage)}*/}).toArray();
-  console.log(messages);
   let uniqueConvo = [];
   for (let i = 0, convo = []; i < messages.length; i++) {
     convo.push(messages[i].toUserId);
     convo.push(messages[i].fromUserId);
     if (i == messages.length - 1) {
       filtered = [...new Set(convo)];
-      uniqueConvo = filtered.splice(filtered.indexOf(userId), 1);
-      console.log(uniqueConvo);
+      console.log(filtered);
+      //uniqueConvo = filtered.splice(filtered.indexOf(userId), 1);
+      //console.log(uniqueConvo);
     }
   }
 
