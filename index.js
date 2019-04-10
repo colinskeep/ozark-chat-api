@@ -39,7 +39,7 @@ MongoClient.connect(url, function(err, db) {
           if (item.userId.toString().trim() == change.fullDocument.toUserId.toString().trim()) {
             return true;
           }
-          if (item.userID.toString().trim() == change.fullDocument.toUserId.toString().trim()) {
+          if (item.userId.toString().trim() == change.fullDocument.toUserId.toString().trim()) {
             return true;
           }
         })
