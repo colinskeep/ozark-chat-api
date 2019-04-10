@@ -50,7 +50,7 @@ MongoClient.connect(url, function(err, db) {
             fromUserId: `${change.fullDocument.fromUserId}`,
             message: `${change.fullDocument.message}`,
             type: 'message',
-            time: `${change.fullDocument.datetime}`,
+            datetime: `${change.fullDocument.datetime}`,
           }]);
           console.log('sending message:', change.fullDocument.message, 'to user: ', index[i]);
         }
