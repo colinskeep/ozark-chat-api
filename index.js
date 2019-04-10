@@ -39,6 +39,9 @@ MongoClient.connect(url, function(err, db) {
           if (item.userId.toString().trim() == change.fullDocument.toUserId.toString().trim()) {
             return true;
           }
+          if (item.userID.toString().trim() == change.fullDocument.toUserId.toString().trim()) {
+            return true;
+          }
         })
         console.log('send to:', activeUserConnections);
         let index = activeUserConnections.map(function(e) {return e.socketid})
