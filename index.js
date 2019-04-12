@@ -98,7 +98,7 @@ io.on('connection', async (socket) => {
     const fromUserId = name._id.toString();
     console.log(toUserId, fromUserId);
     messageCollection.insertOne({}, {
-      $addToSet: {participantIds: {$each: [toUserID, fromUserId] }},
+      $addToSet: {participantIds: {$each: [toUserId, fromUserId] }},
       $addToSet: {usernames: {$each: [value.username, name.username]}},
       $addToSet: {convo: {
         fromUserId: fromUserId,
