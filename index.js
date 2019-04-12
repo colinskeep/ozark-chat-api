@@ -97,15 +97,15 @@ io.on('connection', async (socket) => {
     const toUserId = toId._id.toString();
     const fromUserId = name._id.toString();
     console.log(toUserId, fromUserId);
-    messageCollection.insertOne({}, {
-      $addToSet: {participantIds: {$each: [toUserId, fromUserId] }},
-      $addToSet: {usernames: {$each: [value.username, name.username]}},
-      $addToSet: {convo: {
+    messageCollection.insert({
+      participantIds: [toUserId, fromUserId],
+      usernames: [value.username, name.username],
+      convo: [{
         fromUserId: fromUserId,
         fromUser: name.username,
         message: value.message,
         datetime: Math.floor(new Date() / 1000),
-      }}
+      }],
     })
   });
 
