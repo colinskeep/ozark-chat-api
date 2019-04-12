@@ -19,8 +19,8 @@ MongoClient.connect(url, function(err, db) {
     dbase2 = db.db('users');
     dbase.createCollection('conversations', {
       validator: { $or: [
-        {participantIds: []},
-        {usernames: []},
+        {participantIds: [{$type: 'string'}]},
+        {usernames: [{$type: 'string'}]},
         {convo: [
           {fromUserId: {$type: 'string'}},
           {fromUser: {$type: 'string'}},
@@ -97,7 +97,7 @@ io.on('connection', async (socket) => {
     const toUserId = toId._id.toString();
     const fromUserId = name._id.toString();
     console.log(toUserId, fromUserId);
-    messageCollection.insert({
+    messageCollection.insertOne({
       participantIds: [toUserId, fromUserId],
       usernames: [value.username, name.username],
       convo: [{
