@@ -19,14 +19,9 @@ MongoClient.connect(url, function(err, db) {
     dbase2 = db.db('users');
     dbase.createCollection('conversations', {
       validator: { $or: [
-        {participantIds: [{$type: 'string'}]},
-        {usernames: [{$type: 'string'}]},
-        {convo: [
-          {fromUserId: {$type: 'string'}},
-          {fromUser: {$type: 'string'}},
-          {message: {$type: 'string'}},
-          {datetime: {type: 'string'}}
-        ]},
+        {participantIds: {$type: 'array'}},
+        {usernames: {$type: 'array'}},
+        {convo: {$type: 'array'}},
       ]},
     });
     registrationCollection = dbase2.collection('registrations');
