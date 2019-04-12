@@ -17,20 +17,19 @@ MongoClient.connect(url, function(err, db) {
   if (!err) {
     dbase = db.db(process.env.DB_NAME);
     dbase2 = db.db('users');
-    dbase.createCollection('conversations', {
+    dbase.createCollection('message', {
       validator: { $or: [
-        {participantIds: []},
-        {usernames: []},
-        {convo: [
-          {fromUserId: {$type: 'string'}},
-          {fromUser: {$type: 'string'}},
-          {message: {$type: 'string'}},
-          {datetime: {type: 'string'}}
-        ]},
+        {toUser: {$type: 'string'}},
+        {toUserId: {$type: 'string'}},
+        {fromUser: {$type: 'string'}},
+        {fromUserId: {$type: 'string'}},
+        {message: {$type: 'string'}},
+        {type: {$type: 'string'}},
+        {datetime: {type: 'string'}}
       ]},
     });
     registrationCollection = dbase2.collection('registrations');
-    messageCollection = dbase.collection('conversations');
+    messageCollection = dbase.collection('message');
     changeStream = messageCollection.watch(pipeline);
     changeStream.on('change', async function(change) {
       try {
@@ -96,17 +95,15 @@ io.on('connection', async (socket) => {
     const toId = await registrationCollection.findOne({username: value.username});
     const toUserId = toId._id.toString();
     const fromUserId = name._id.toString();
-    console.log(toUserId, fromUserId);
-    messageCollection.insertOne({}, {
-      $addToSet: {participantIds: {$each: [toUserID, fromUserId] }},
-      $addToSet: {usernames: {$each: [value.username, name.username]}},
-      $addToSet: {convo: {
-        fromUserId: fromUserId,
-        fromUser: name.username,
-        message: value.message,
-        datetime: Math.floor(new Date() / 1000),
-      }}
+    messageCollection.insertOne({
+      toUser: value.username,
+      toUserId: toUserId,
+      fromUser: name.username,
+      fromUserId: fromUserId,
+      message: value.message,
+      datetime: Math.floor(new Date() / 1000),
     })
+    console.log(value);
   });
 
   socket.on('disconnect', () => {
@@ -117,8 +114,4 @@ io.on('connection', async (socket) => {
 
 http.listen(process.env.PORT, function() {
   console.log('listening');
-});
-
-app.get('/', function(req, res) {
-   res.sendFile('index.html');
 });
