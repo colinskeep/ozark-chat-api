@@ -64,7 +64,7 @@ io.on('connection', async (socket) => {
   const user = await jwt.resolve(socket.handshake.query.jwt);
   const name = await registrationCollection.findOne({email: user.email});
   const userId = name._id.toString().trim();
-  const messages = await messageCollection.find({participantIds: userId},{$project: { participantIds: 1, usernames: 1, convo: {$slice: -1}}});
+  const messages = await messageCollection.find({participantIds: userId},{$project: { participantIds: 1, usernames: 1, convo: {$slice: -1}}}).toArray();
   console.log(messages);
   if (messages.length > 0) {
     let objects = [];
