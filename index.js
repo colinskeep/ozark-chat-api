@@ -73,7 +73,10 @@ io.on('connection', async (socket) => {
         if (item !== userId) {
           return true;
         }
-      })
+      });
+      if (otherusers.length < 1) {
+        otherusers.push(userId);
+      }
       objects.push({
         participantIds: otherusers,
         usernames: messages[i].usernames,
