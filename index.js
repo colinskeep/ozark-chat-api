@@ -37,6 +37,7 @@ MongoClient.connect(url, function(err, db) {
             return true;
           }
         })
+        console.log(change.fullDocument);
         console.log('send to:', activeUserConnections);
         let index = activeUserConnections.map(function(e) {return e.socketid})
         for (var i = 0; i < index.length; i++) {
@@ -63,20 +64,7 @@ io.on('connection', async (socket) => {
   const user = await jwt.resolve(socket.handshake.query.jwt);
   const name = await registrationCollection.findOne({email: user.email});
   const userId = name._id.toString().trim();
-  const messages = await messageCollection.find({$or: [{toUserId: userId}, {fromUserId: userId}]/*, datetime: {$gt: parseInt(socket.handshake.query.lastMessage)}*/}).toArray();
-  let uniqueConvo = [];
-  for (let i = 0, convo = []; i < messages.length; i++) {
-    convo.push(messages[i].toUserId);
-    convo.push(messages[i].fromUserId);
-    if (i == messages.length - 1) {
-      filtered = [...new Set(convo)];
-      filtered = filtered.filter(v => v !== userId);
-      console.log(filtered);
-      //uniqueConvo = filtered.splice(filtered.indexOf(userId), 1);
-      //console.log(uniqueConvo);
-    }
-  }
-
+  const messages = await messageCollection.find([userId]},{$project: { participantId: 1, usernames: 1, convo: {$slice: -1}}).toArray();
   if (messages.length > 0) {
     io.to(`${socket.conn.id}`).emit('message', messages);
   }
@@ -87,7 +75,7 @@ io.on('connection', async (socket) => {
     datetime: Math.floor(new Date() / 1000),
   });
 
-  socket.on('message', async function(value) {
+  socket.on('newconvo', async function(value) {
     const toId = await registrationCollection.findOne({username: value.username});
     const toUserId = toId._id.toString();
     const fromUserId = name._id.toString();
@@ -102,6 +90,23 @@ io.on('connection', async (socket) => {
         datetime: Math.floor(new Date() / 1000),
       }],
     })
+  });
+
+  socket.on('message', async function(value) {
+    const toId = await registrationCollection.findOne({username: value.username});
+    const toUserId = toId._id.toString();
+    const fromUserId = name._id.toString();
+    console.log(toUserId, fromUserId);
+    messageCollection.update({_id: value.id},
+      {$addToSet: {
+        convo: {
+          fromUserId: fromUserId,
+          fromUser: name.username,
+          message: value.message,
+          datetime: Math.floor(new Date() / 1000),
+        },
+      }}
+    );
   });
 
   socket.on('disconnect', () => {
