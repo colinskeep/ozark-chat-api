@@ -65,17 +65,26 @@ io.on('connection', async (socket) => {
   const name = await registrationCollection.findOne({email: user.email});
   const userId = name._id.toString().trim();
   const messages = await messageCollection.find({participantIds: userId},{$project: { participantIds: 1, usernames: 1, convo: {$slice: -1}}}).toArray();
-  console.log(messages);
   if (messages.length > 0) {
+    //remove your own userid from participantIds so the front end can process
     let objects = [];
     for (let i = 0; i < messages.length; i++) {
-      let otherusers = messages[i].participantIds.filter(function(item){
+      let otherUserIds = messages[i].participantIds.filter(function(item){
         if (item !== userId) {
           return true;
         }
       });
-      if (otherusers.length < 1) {
-        otherusers.push(userId);
+      let otherUsernames = messages[i].usernames.filter(function(item){
+        if (item !== name.username) {
+          return true;
+        }
+      })
+      //if no other users in conversation return own userid to show conversation with self
+      if (otherUserIds.length < 1) {
+        otherUserIds.push(userId);
+      }
+      if (otherUsernames.length < 1) {
+        otherUsernames.push(name.username);
       }
       objects.push({
         participantIds: otherusers,
