@@ -20,7 +20,6 @@ MongoClient.connect(url, function(err, db) {
     dbase.createCollection('conversations', {
       validator: { $or: [
         {participantIds: {$type: 'array'}},
-        {usernames: {$type: 'array'}},
         {convo: {$type: 'array'}},
       ]},
     });
@@ -70,15 +69,15 @@ io.on('connection', async (socket) => {
     let objects = [];
     for (let i = 0; i < messages.length; i++) {
       let otherUserIds = messages[i].participantIds.filter(function(item){
-        if (item !== userId) {
+        if (item.userId !== userId) {
           return true;
         }
       });
-      let otherUsernames = messages[i].usernames.filter(function(item){
-        if (item !== name.username) {
-          return true;
-        }
-      })
+      // let otherUsernames = messages[i].usernames.filter(function(item){
+      //   if (item !== name.username) {
+      //     return true;
+      //   }
+      // })
       //if no other users in conversation return own userid to show conversation with self
       if (otherUserIds.length < 1) {
         otherUserIds.push(userId);
@@ -108,8 +107,14 @@ io.on('connection', async (socket) => {
     const fromUserId = name._id.toString();
     console.log(toUserId, fromUserId);
     messageCollection.insertOne({
-      participantIds: [toUserId, fromUserId],
-      usernames: [value.username, name.username],
+      participantIds: [{
+        userId: touserId,
+        username: value.username
+      },
+      {
+        userId: fromUserId,
+        username: name.username
+      }],
       convo: [{
         fromUserId: fromUserId,
         fromUser: name.username,
