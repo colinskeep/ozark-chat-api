@@ -64,9 +64,23 @@ io.on('connection', async (socket) => {
   const user = await jwt.resolve(socket.handshake.query.jwt);
   const name = await registrationCollection.findOne({email: user.email});
   const userId = name._id.toString().trim();
-  const messages = await messageCollection.find({participantIds: userId},{$project: { participantIds: 1, usernames: 1, convo: {$slice: -1}}}).toArray();
+  const messages = await messageCollection.find({participantIds: userId},{$project: { participantIds: 1, usernames: 1, convo: {$slice: -1}}});
+  console.log(messages);
   if (messages.length > 0) {
-    io.to(`${socket.conn.id}`).emit('message', messages);
+    let objects = [];
+    for (let i = 0; i < messages.length; i++) {
+      let otherusers = messages[i].participantIds.filter(function(item){
+        if (item !== userId) {
+          return true;
+        }
+      })
+      objects.push({
+        participantIds: otherusers,
+        usernames: messages[i].usernames,
+        lastMessage: messages[i].convo[0],
+      })
+    }
+    io.to(`${socket.conn.id}`).emit('message', objects);
   }
   arr.push({
     socketid: socket.conn.id,
