@@ -90,6 +90,7 @@ io.on('connection', async (socket) => {
         lastMessage: messages[i].convo[0],
       })
     }
+    console.log(objects);
     io.to(`${socket.conn.id}`).emit('conversations', objects);
   }
   arr.push({
