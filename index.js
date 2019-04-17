@@ -28,11 +28,9 @@ MongoClient.connect(url, function(err, db) {
     changeStream = messageCollection.watch(pipeline);
     changeStream.on('change', async function(change) {
       try {
+        let sendTo = change.fullDocument.participantIds.map(function(e) {return e.userId});
         let activeUserConnections = arr.filter(function(item) {
-          if (item.userId.toString().trim() == change.fullDocument.toUserId.toString().trim()) {
-            return true;
-          }
-          if (item.userId.toString().trim() == change.fullDocument.fromUserId.toString().trim()) {
+          if (sendTo.indexOf(item.userId.toString().trim()) > -1) {
             return true;
           }
         })
