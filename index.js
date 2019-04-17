@@ -91,6 +91,7 @@ io.on('connection', async (socket) => {
       })
     }
     console.log(objects);
+    io.to(`${socket.conn.id}`).emit('conversations', 'dick');
     io.to(`${socket.conn.id}`).emit('conversations', objects);
   }
   arr.push({
