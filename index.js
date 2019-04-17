@@ -73,7 +73,7 @@ io.on('connection', async (socket) => {
         }
       });
       if (otherUserIds.length < 1) {
-        otherUserIds.push({userId: userId}, username: name.username);
+        otherUserIds.push({userId: userId, username: name.username});
       }
       objects.push({
         conversationId: messages[i]._id,
