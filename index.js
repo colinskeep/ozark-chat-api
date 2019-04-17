@@ -87,7 +87,6 @@ io.on('connection', async (socket) => {
       objects.push({
         conversationId: messages[i]._id,
         participantIds: otherUserIds,
-        usernames: otherUsernames,
         lastMessage: messages[i].convo[0],
       })
     }
