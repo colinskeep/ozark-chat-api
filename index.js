@@ -2,7 +2,7 @@ require('dotenv').config();
 const app = require('express')();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
-const MongoClient = require('mongodb').MongoClient;
+const MongoClient = require('mongodb');
 const url = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}`;
 const jwt = require('./jwt.js');
 
