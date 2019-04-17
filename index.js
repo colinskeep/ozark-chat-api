@@ -133,10 +133,10 @@ io.on('connection', async (socket) => {
     console.log(value);
     console.log(value.conversationId);
     console.log(MongoClient.ObjectId(value.conversationId));
-    const messages = await messageCollection.findOne({_id: MongoClient.ObjectId(value.conversationId)}, {$project: {convo: 1}});
+    const messages = await messageCollection.findOne({_id: MongoClient.ObjectId(value.conversationId)}, {convo: 1});
     console.log(messages);
     io.to(`${socket.conn.id}`).emit('conversationId', messages);
-  })
+  });
 
   socket.on('disconnect', () => {
     arr.splice(arr.map(function(e) {
