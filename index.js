@@ -72,18 +72,9 @@ io.on('connection', async (socket) => {
           return true;
         }
       });
-      // let otherUsernames = messages[i].usernames.filter(function(item){
-      //   if (item !== name.username) {
-      //     return true;
-      //   }
-      // })
-      //if no other users in conversation return own userid to show conversation with self
       if (otherUserIds.length < 1) {
-        otherUserIds.push(userId);
+        otherUserIds.push({userId: userId}, username: name.username);
       }
-      // if (otherUsernames.length < 1) {
-      //   otherUsernames.push(name.username);
-      // }
       objects.push({
         conversationId: messages[i]._id,
         participantIds: otherUserIds,
