@@ -129,6 +129,10 @@ io.on('connection', async (socket) => {
       }}
     );
   });
+  socket.on('conversationId', async function(value) {
+    const messages = await messageCollection.findOne({_id: value.conversationId}).toArray();
+    io.to(`${socket.conn.id}`).emit('conversationId', messages);
+  })
 
   socket.on('disconnect', () => {
     arr.splice(arr.map(function(e) {
