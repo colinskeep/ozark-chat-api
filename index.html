@@ -26,7 +26,7 @@
         console.log(window.location.origin);
       });
       function myFunction() {
-        socket.emit('message', {
+        socket.emit('newconvo', {
           to: 'colinskeep83112',
           from: 'Ted',
           message: document.getElementById('m').value,

@@ -108,7 +108,7 @@ io.on('connection', async (socket) => {
     console.log(toUserId, fromUserId);
     messageCollection.insertOne({
       participantIds: [{
-        userId: touserId,
+        userId: toUserId,
         username: value.username
       },
       {
