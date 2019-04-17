@@ -41,7 +41,7 @@ MongoClient.connect(url, function(err, db) {
         console.log('send to:', activeUserConnections);
         let index = activeUserConnections.map(function(e) {return e.socketid})
         for (var i = 0; i < index.length; i++) {
-          io.to(`${index[i]}`).emit('message', [{
+          io.to(`${index[i]}`).emit('conversations', [{
             _id: `${change.fullDocument._id}`,
             toUser: `${change.fullDocument.toUser}`,
             toUserId: `${change.fullDocument.toUserId}`,
@@ -92,7 +92,7 @@ io.on('connection', async (socket) => {
         lastMessage: messages[i].convo[0],
       })
     }
-    io.to(`${socket.conn.id}`).emit('message', objects);
+    io.to(`${socket.conn.id}`).emit('conversations', objects);
   }
   arr.push({
     socketid: socket.conn.id,
@@ -118,7 +118,7 @@ io.on('connection', async (socket) => {
     })
   });
 
-  socket.on('message', async function(value) {
+  socket.on('conversations', async function(value) {
     const toId = await registrationCollection.findOne({username: value.username});
     const toUserId = toId._id.toString();
     const fromUserId = name._id.toString();
