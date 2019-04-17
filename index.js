@@ -132,8 +132,8 @@ io.on('connection', async (socket) => {
   socket.on('conversationId', async function(value) {
     console.log(value);
     console.log(value.conversationId);
-    console.log(ObjectId(value.conversationId));
-    const messages = await messageCollection.findOne({_id: ObjectId(value.conversationId)});
+    console.log(MongoClient.ObjectId(value.conversationId));
+    const messages = await messageCollection.findOne({_id: MongoClient.ObjectId(value.conversationId)});
     console.log(messages);
     io.to(`${socket.conn.id}`).emit('conversationId', messages);
   })
