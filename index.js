@@ -62,6 +62,7 @@ io.on('connection', async (socket) => {
   const name = await registrationCollection.findOne({email: user.email});
   const userId = name._id.toString().trim();
   const messages = await messageCollection.find({participantIds: {userId: userId}},{$project: { participantIds: 1, convo: {$slice: -1}}}).toArray();
+  console.log(messages);
   if (messages.length > 0) {
     //remove your own userid from participantIds so the front end can process
     let objects = [];
