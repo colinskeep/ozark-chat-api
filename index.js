@@ -87,8 +87,8 @@ io.on('connection', async (socket) => {
         otherUsernames.push(name.username);
       }
       objects.push({
-        participantIds: otherusers,
-        usernames: messages[i].usernames,
+        participantIds: otherUserIds,
+        usernames: otherUsernames,
         lastMessage: messages[i].convo[0],
       })
     }
