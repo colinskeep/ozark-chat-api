@@ -130,6 +130,8 @@ io.on('connection', async (socket) => {
     );
   });
   socket.on('conversationId', async function(value) {
+    console.log(value);
+    console.log(value.id);
     const messages = await messageCollection.findOne({_id: value.conversationId});
     io.to(`${socket.conn.id}`).emit('conversationId', messages);
   })
