@@ -117,7 +117,6 @@ io.on('connection', async (socket) => {
     const toId = await registrationCollection.findOne({username: value.username});
     const toUserId = toId._id.toString();
     const fromUserId = name._id.toString();
-    console.log(toUserId, fromUserId);
     messageCollection.update({_id: value.id},
       {$addToSet: {
         convo: {
@@ -130,11 +129,7 @@ io.on('connection', async (socket) => {
     );
   });
   socket.on('conversationId', async function(value) {
-    console.log(value);
-    console.log(value.conversationId);
-    console.log(MongoClient.ObjectId(value.conversationId));
     const messages = await messageCollection.findOne({_id: MongoClient.ObjectId(value.conversationId)}, {convo: 1});
-    console.log(messages);
     io.to(`${socket.conn.id}`).emit('conversationId', messages);
   });
 
