@@ -44,11 +44,11 @@ MongoClient.connect(url, function(err, db) {
             toUserId: `${change.fullDocument.toUserId}`,
             fromUser: `${change.fullDocument.fromUser}`,
             fromUserId: `${change.fullDocument.fromUserId}`,
-            message: `${change.fullDocument.message}`,
+            message: `${change.fullDocument.convo[0].message}`,
             type: 'message',
             datetime: `${change.fullDocument.datetime}`,
           }]);
-          console.log('sending message:', change.fullDocument.message, 'to user: ', index[i]);
+          console.log('sending message:', change.fullDocument.convo[0].message, 'to user: ', index[i]);
         }
       } catch (err) {console.log(err)}
     });
@@ -112,7 +112,11 @@ io.on('connection', async (socket) => {
       }],
     })
   });
-
+  socket.on('message', async function(value) {
+    const toId = await registrationCollection.findOne({username: value.username});
+    const existingMessages = await messageCollection.find({participantIds: toId._id, participantIds: name._id});
+    console.log(existingMessages);
+  })
   socket.on('conversations', async function(value) {
     const toId = await registrationCollection.findOne({username: value.username});
     const toUserId = toId._id.toString();
