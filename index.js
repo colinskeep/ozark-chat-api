@@ -110,12 +110,41 @@ io.on('connection', async (socket) => {
         message: value.message,
         datetime: Math.floor(new Date() / 1000),
       }],
-    })
+    });
   });
   socket.on('message', async function(value) {
     const toId = await registrationCollection.findOne({username: value.username});
-    const existingMessages = await messageCollection.find({participantIds: toId._id, participantIds: name._id});
+    const existingMessages = await messageCollection.find({participantIds: {$size: 2, $all: [toId._id, name._]});
     console.log(existingMessages);
+    if (existingMessages) {
+      messageCollection.update({_id: existingMessages._id},
+        {$addToSet: {
+          convo: {
+            fromUserId: fromUserId,
+            fromUser: name.username,
+            message: value.message,
+            datetime: Math.floor(new Date() / 1000),
+          },
+        }}
+      );
+    } else {
+      messageCollection.insertOne({
+        participantIds: [{
+          userId: toUserId,
+          username: value.username
+        },
+        {
+          userId: fromUserId,
+          username: name.username
+        }],
+        convo: [{
+          fromUserId: fromUserId,
+          fromUser: name.username,
+          message: value.message,
+          datetime: Math.floor(new Date() / 1000),
+        }],
+      })
+    }
   })
   socket.on('conversations', async function(value) {
     const toId = await registrationCollection.findOne({username: value.username});
