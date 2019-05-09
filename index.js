@@ -114,7 +114,7 @@ io.on('connection', async (socket) => {
   });
   socket.on('message', async function(value) {
     const toId = await registrationCollection.findOne({username: value.username});
-    const existingMessages = await messageCollection.find({participantIds: {$size: 2, $all: [toId._id, name._]}});
+    const existingMessages = await messageCollection.find({participantIds: {$size: 2, $all: [toId._id, name._id]}});
     console.log(existingMessages);
     if (existingMessages) {
       messageCollection.update({_id: existingMessages._id},
